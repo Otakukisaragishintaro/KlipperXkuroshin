@@ -183,6 +183,70 @@ sudo systemctl status klipper --no-pager
 
 如果你使用的是手机上的 Beam Klipper、容器或其他启动管理方式，请使用对应方式重启 Klipper 主机进程；不要盲目执行上面的 systemd 命令。重启后先检查 Klipper 日志和配置加载结果，不要立即开始打印。
 
+## 方案 C：直接替换完整文件（不使用 git apply）
+
+如果你不熟悉 Git 补丁操作，也可以下载仓库提供的完整 `bed_mesh.py`，手动替换 Klipper 中对应文件。
+
+**注意：这个完整文件不是通用版。** 它由 Klipper 基准 commit `29d4ec2d6d840ee839333306003a400da186d41d` 的原始 `klippy/extras/bed_mesh.py` 加上本项目补丁生成。只有源码版本完全一致时才能使用。不同 commit 的完整文件不能直接覆盖。
+
+### 第 1 步：先确认版本
+
+进入你的 Klipper 源码目录：
+
+```bash
+cd ~/klipper
+git rev-parse HEAD
+```
+
+输出必须为：
+
+```text
+29d4ec2d6d840ee839333306003a400da186d41d
+```
+
+如果不是，停止操作，不要用这个完整文件覆盖。
+
+### 第 2 步：备份原文件
+
+```bash
+cp klippy/extras/bed_mesh.py ~/bed_mesh.py.before-kuroshin-patch
+```
+
+如果目标文件已有你自己的修改，请先另外保存这些修改；备份只是防止文件覆盖后无法恢复，不会自动合并你自己的改动。
+
+### 第 3 步：下载完整替换文件
+
+```bash
+curl -fL https://raw.githubusercontent.com/Otakukisaragishintaro/KlipperXkuroshin/main/manual-replacement/bed_mesh.py -o /tmp/bed_mesh.py.kuroshin
+```
+
+### 第 4 步：替换文件
+
+```bash
+cp /tmp/bed_mesh.py.kuroshin klippy/extras/bed_mesh.py
+```
+
+### 第 5 步：检查语法和文件状态
+
+```bash
+python3 -m py_compile klippy/extras/bed_mesh.py
+git diff --check
+git status --short
+```
+
+语法检查通过不代表功能测试通过。请继续按照 [中文测试清单](TESTING.zh-CN.md) 验证；不要直接开始无人看管的正式打印。
+
+### 第 6 步：恢复原文件
+
+如果需要撤销替换：
+
+```bash
+cp ~/bed_mesh.py.before-kuroshin-patch klippy/extras/bed_mesh.py
+python3 -m py_compile klippy/extras/bed_mesh.py
+```
+
+如果替换后你又对 `bed_mesh.py` 做了其他修改，恢复备份会覆盖这些后续修改，请先自行保存。
+
 ## 常见问题
 
 **提示 patch does not apply / patch failed**
