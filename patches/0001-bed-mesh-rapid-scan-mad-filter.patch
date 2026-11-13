@@ -54,8 +54,8 @@
 +                    "bed_mesh: fewer than two valid repeated scan samples "
 +                    "at path point %d (MAD %.6fmm, threshold %.6fmm)"
 +                    % (point_idx, mad, threshold))
-+            avg_z = sum(sample.bed_z for sample in valid_samples) \\
-+                / len(valid_samples)
++            avg_z = (sum(sample.bed_z for sample in valid_samples)
++                     / len(valid_samples))
 +            averaged_results.append(
 +                samples[0]._replace(bed_z=avg_z))
 +        logging.info(
@@ -80,7 +80,7 @@
 +        try:
 +            offsets = pprobe.get_offsets(gcmd)
 +            initial_move = True
-+            for scan_idx in range(self.rapid_scan_repeats):
++            for _ in range(self.rapid_scan_repeats):
 +                for pos, is_probe_pt in rapid_path:
 +                    pos = self._apply_offsets(pos[:2], offsets)
 +                    toolhead.manual_move(pos, speed)
