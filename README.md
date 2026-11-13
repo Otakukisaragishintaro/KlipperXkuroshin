@@ -1,5 +1,7 @@
 # KlipperXkuroshin
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 An independent patch proposal for Klipper's `bed_mesh` rapid-scan workflow.
 The intended upstream target is [Klipper3d/klipper](https://github.com/Klipper3d/klipper).
 
