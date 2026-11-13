@@ -75,10 +75,11 @@ threshold = max(outlier_min, multiplier * 1.4826 * MAD)
 
 ## 安装、更新日志与测试
 
-- **[完整替换文件 bed_mesh.py](manual-replacement/bed_mesh.py)**：适用于指定基准版本的完整文件，可用于不方便执行 `git apply` 的手动替换方式；必须先备份原文件并核对版本。
+- **[完整替换文件 bed_mesh.py](manual-replacement/bed_mesh.py)**：适用于指定基准版本的完整文件，可直接替换单个源码文件。
+- **[单文件替换、备份与恢复教程](docs/SINGLE-FILE-REPLACEMENT.zh-CN.md)**：逐步讲解版本核对、下载、语法预检、带时间戳备份、替换、重启检查和恢复原文件。
 - **[中文傻瓜式安装指南](docs/INSTALL.zh-CN.md)**：从下载独立 Klipper 测试副本、检查补丁、应用补丁，到语法检查和撤销补丁，提供逐步复制执行的命令。
 - [中文更新日志](CHANGELOG.zh-CN.md)：记录每次功能变化、源码审查结论和未完成事项。
-- [中文测试清单](docs/TESTING.zh-CN.md)：逐项记录静态检查、行为回归和受控测试。
+- [中文测试清单](docs/TESTING.zh-CN.md)：逐项记录补丁、完整替换文件的静态检查、行为回归和受控测试。
 
 第一次使用请先按安装指南的**方案 A：隔离副本测试**操作，不要直接修改正在运行的打印机 Klipper。
 
