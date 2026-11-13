@@ -55,6 +55,14 @@ probe session.
 
 See [CHANGELOG.md](CHANGELOG.md) for the review and hardening record.
 
+## Complete single-file replacement
+
+A complete `bed_mesh.py` replacement is available at
+[`manual-replacement/bed_mesh.py`](manual-replacement/bed_mesh.py). It is only
+for the exact base commit listed below; do not overwrite a different Klipper
+revision or local modifications. The step-by-step backup, replacement, and
+rollback guide is currently available in [Simplified Chinese](docs/SINGLE-FILE-REPLACEMENT.zh-CN.md).
+
 ## Patch baseline and status
 
 - Upstream: `Klipper3d/klipper`
