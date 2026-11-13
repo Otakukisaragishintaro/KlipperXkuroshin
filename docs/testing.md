@@ -15,6 +15,11 @@ repository does not mean it has passed these tests.
    a clear command error.
 8. Confirm the probe session is ended if scanning, result retrieval, filtering,
    or finalization raises an error.
+9. Confirm Klipper dispatches `gcode:command_error` only after the command
+   handler unwinds, and that Eddy's error handler does not attempt a second
+   cleanup after the `finally` block has cleared the session.
+10. Confirm an empty generated rapid-scan path is rejected before a probe
+    session is started.
 
 ## Behavioral checks
 
