@@ -51,7 +51,7 @@ git diff --cached --quiet -- klippy/extras/bed_mesh.py
 ```bash
 curl -fL --retry 3 \
   https://raw.githubusercontent.com/Otakukisaragishintaro/KlipperXkuroshin/main/manual-replacement/bed_mesh.py \
-  -o /tmp/bed_mesh.py.kuroshin
+  -o /tmp/bed_mesh.kuroshin.py
 ```
 
 确认下载文件存在且非空：
@@ -99,7 +99,7 @@ cp /tmp/bed_mesh.py.kuroshin klippy/extras/bed_mesh.py
 
 检查目标文件：
 
-```python
+```bash
 python3 -m py_compile klippy/extras/bed_mesh.py
 git diff --check
 git status --short -- klippy/extras/bed_mesh.py
