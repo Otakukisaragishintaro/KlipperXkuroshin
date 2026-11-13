@@ -68,7 +68,7 @@
          speed = gcmd.get_float("SCAN_SPEED", self.speed)
          scan_height = gcmd.get_float("HORIZONTAL_MOVE_Z", self.scan_height)
          gcmd.respond_info(
-@@ -1207,23 +1265,32 @@
+@@ -1207,24 +1265,33 @@
          )
          gcmd_params = gcmd.get_command_parameters()
          gcmd_params["SAMPLE_TIME"] = half_window * 2
