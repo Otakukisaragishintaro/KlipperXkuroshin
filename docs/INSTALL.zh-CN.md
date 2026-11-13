@@ -38,7 +38,7 @@ git checkout 29d4ec2d6d840ee839333306003a400da186d41d
 仍在刚才的 `klipper` 目录中执行：
 
 ```bash
-curl -fL   https://raw.githubusercontent.com/Otakukisaragishintaro/KlipperXkuroshin/main/patches/0001-bed-mesh-rapid-scan-mad-filter.patch   -o /tmp/klipperxkuroshin-rapid-scan.patch
+curl -fL https://raw.githubusercontent.com/Otakukisaragishintaro/KlipperXkuroshin/main/patches/0001-bed-mesh-rapid-scan-mad-filter.patch -o /tmp/klipperxkuroshin-rapid-scan.patch
 ```
 
 检查文件是否下载成功：
