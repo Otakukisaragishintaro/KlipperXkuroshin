@@ -75,6 +75,7 @@ threshold = max(outlier_min, multiplier * 1.4826 * MAD)
 
 ## 安装、更新日志与测试
 
+- **[完整替换文件 bed_mesh.py](manual-replacement/bed_mesh.py)**：适用于指定基准版本的完整文件，可用于不方便执行 `git apply` 的手动替换方式；必须先备份原文件并核对版本。
 - **[中文傻瓜式安装指南](docs/INSTALL.zh-CN.md)**：从下载独立 Klipper 测试副本、检查补丁、应用补丁，到语法检查和撤销补丁，提供逐步复制执行的命令。
 - [中文更新日志](CHANGELOG.zh-CN.md)：记录每次功能变化、源码审查结论和未完成事项。
 - [中文测试清单](docs/TESTING.zh-CN.md)：逐项记录静态检查、行为回归和受控测试。
