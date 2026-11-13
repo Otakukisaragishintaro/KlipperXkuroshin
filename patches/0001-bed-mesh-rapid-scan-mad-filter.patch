@@ -68,7 +68,7 @@
          speed = gcmd.get_float("SCAN_SPEED", self.speed)
          scan_height = gcmd.get_float("HORIZONTAL_MOVE_Z", self.scan_height)
          gcmd.respond_info(
-@@ -1207,24 +1265,35 @@
+@@ -1207,24 +1265,38 @@
          )
          gcmd_params = gcmd.get_command_parameters()
          gcmd_params["SAMPLE_TIME"] = half_window * 2
@@ -76,6 +76,9 @@
 +        # Materialize once so every pass follows the exact same path.
 +        rapid_path = list(self.probe_manager.iter_rapid_path())
 +        point_count = sum(1 for pos, is_probe_pt in rapid_path if is_probe_pt)
++        if point_count < 1:
++            raise gcmd.error(
++                "bed_mesh: rapid scan path contains no probe points")
          probe_session = pprobe.start_probe_session(gcmd)
 +        try:
 +            offsets = pprobe.get_offsets(gcmd)
