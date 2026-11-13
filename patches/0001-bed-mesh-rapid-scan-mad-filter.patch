@@ -1,0 +1,117 @@
+--- a/klippy/extras/bed_mesh.py
++++ b/klippy/extras/bed_mesh.py
+@@ -1181,9 +1181,67 @@
+         self.probe_manager = probe_mgr
+         self.speed = config.getfloat("speed", 50., above=0.)
+         self.scan_height = config.getfloat("horizontal_move_z", 5.)
+         self.finalize_callback = finalize_cb
++        # Repeated rapid scans are opt-in to preserve existing behavior.
++        self.rapid_scan_repeats = config.getint(
++            "rapid_scan_repeats", 1, minval=1)
++        if self.rapid_scan_repeats == 2:
++            raise config.error(
++                "Option 'rapid_scan_repeats' must be 1 or at least 3")
++        self.rapid_scan_mad_multiplier = config.getfloat(
++            "rapid_scan_mad_multiplier", 3.0, above=0.)
++        self.rapid_scan_outlier_min = config.getfloat(
++            "rapid_scan_outlier_min", 0.020, above=0.)
+ 
++    @staticmethod
++    def _median(values):
++        values = sorted(values)
++        count = len(values)
++        middle = count // 2
++        if count % 2:
++            return values[middle]
++        return (values[middle - 1] + values[middle]) / 2.
++
++    def _filter_repeated_results(self, results, point_count, gcmd):
++        repeats = self.rapid_scan_repeats
++        expected_count = point_count * repeats
++        if len(results) != expected_count:
++            raise gcmd.error(
++                "bed_mesh: rapid scan returned %d results; expected %d "
++                "(%d points x %d passes)"
++                % (len(results), expected_count, point_count, repeats))
++        averaged_results = []
++        rejected_count = 0
++        for point_idx in range(point_count):
++            samples = [results[pass_idx * point_count + point_idx]
++                       for pass_idx in range(repeats)]
++            heights = [sample.bed_z for sample in samples]
++            center = self._median(heights)
++            mad = self._median([abs(height - center)
++                                for height in heights])
++            threshold = max(
++                self.rapid_scan_outlier_min,
++                self.rapid_scan_mad_multiplier * 1.4826 * mad)
++            valid_samples = [
++                sample for sample in samples
++                if abs(sample.bed_z - center) <= threshold]
++            rejected_count += len(samples) - len(valid_samples)
++            if len(valid_samples) < 2:
++                raise gcmd.error(
++                    "bed_mesh: fewer than two valid repeated scan samples "
++                    "at path point %d (MAD %.6fmm, threshold %.6fmm)"
++                    % (point_idx, mad, threshold))
++            avg_z = sum(sample.bed_z for sample in valid_samples) \\
++                / len(valid_samples)
++            averaged_results.append(
++                samples[0]._replace(bed_z=avg_z))
++        logging.info(
++            "bed_mesh: rapid scan MAD filter rejected %d of %d samples "
++            "across %d path points",
++            rejected_count, expected_count, point_count)
++        return averaged_results
++
+     def perform_rapid_scan(self, gcmd):
+         speed = gcmd.get_float("SCAN_SPEED", self.speed)
+         scan_height = gcmd.get_float("HORIZONTAL_MOVE_Z", self.scan_height)
+         gcmd.respond_info(
+@@ -1207,23 +1265,32 @@
+         )
+         gcmd_params = gcmd.get_command_parameters()
+         gcmd_params["SAMPLE_TIME"] = half_window * 2
+         self._raise_tool(gcmd, scan_height)
++        # Materialize once so every pass follows the exact same path.
++        rapid_path = list(self.probe_manager.iter_rapid_path())
++        point_count = sum(1 for pos, is_probe_pt in rapid_path if is_probe_pt)
+         probe_session = pprobe.start_probe_session(gcmd)
++        try:
++            offsets = pprobe.get_offsets(gcmd)
++            initial_move = True
++            for scan_idx in range(self.rapid_scan_repeats):
++                for pos, is_probe_pt in rapid_path:
++                    pos = self._apply_offsets(pos[:2], offsets)
++                    toolhead.manual_move(pos, speed)
++                    if initial_move:
++                        initial_move = False
++                        self._move_to_scan_height(gcmd, scan_height)
++                    if is_probe_pt:
++                        probe_session.run_probe(gcmd)
++            results = probe_session.pull_probed_results()
++            toolhead.get_last_move_time()
++            if self.rapid_scan_repeats > 1:
++                results = self._filter_repeated_results(
++                    results, point_count, gcmd)
++            self.finalize_callback(results)
++        finally:
++            probe_session.end_probe_session()
+-        offsets = pprobe.get_offsets(gcmd)
+-        initial_move = True
+-        for pos, is_probe_pt in self.probe_manager.iter_rapid_path():
+-            pos = self._apply_offsets(pos[:2], offsets)
+-            toolhead.manual_move(pos, speed)
+-            if initial_move:
+-                initial_move = False
+-                self._move_to_scan_height(gcmd, scan_height)
+-            if is_probe_pt:
+-                probe_session.run_probe(gcmd)
+-        results = probe_session.pull_probed_results()
+-        toolhead.get_last_move_time()
+-        self.finalize_callback(results)
+-        probe_session.end_probe_session()
+ 
+     def _raise_tool(self, gcmd, scan_height):
+         # If the nozzle is below scan height raise the tool
+         toolhead = self.printer.lookup_object("toolhead")
