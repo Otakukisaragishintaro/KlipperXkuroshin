@@ -41,6 +41,18 @@ threshold = max(outlier_min, multiplier * 1.4826 * MAD)
 Samples farther than the threshold from the median are rejected. At least two
 samples must remain, after which their arithmetic mean is used.
 
+## Review notes
+
+The source review confirmed that Python executes the `finally` block before
+Klipper's `_process_commands()` dispatches `gcode:command_error`. Eddy's
+registered error handler checks whether `_gather` is non-`None`, so the normal
+cleanup path does not call `end_probe_session()` twice. The earlier concern
+about inevitable double cleanup was incorrect. The patch now documents this
+ordering and rejects an impossible empty rapid-scan path before starting a
+probe session.
+
+See [CHANGELOG.md](CHANGELOG.md) for the review and hardening record.
+
 ## Patch baseline and status
 
 - Upstream: `Klipper3d/klipper`
