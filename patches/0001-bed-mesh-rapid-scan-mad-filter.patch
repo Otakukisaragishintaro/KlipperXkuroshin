@@ -68,7 +68,7 @@
          speed = gcmd.get_float("SCAN_SPEED", self.speed)
          scan_height = gcmd.get_float("HORIZONTAL_MOVE_Z", self.scan_height)
          gcmd.respond_info(
-@@ -1207,24 +1265,33 @@
+@@ -1207,24 +1265,35 @@
          )
          gcmd_params = gcmd.get_command_parameters()
          gcmd_params["SAMPLE_TIME"] = half_window * 2
@@ -96,6 +96,8 @@
 +                    results, point_count, gcmd)
 +            self.finalize_callback(results)
 +        finally:
++            # Klipper dispatches gcode:command_error after this handler
++            # unwinds, so Eddy sees the already-cleared session.
 +            probe_session.end_probe_session()
 -        offsets = pprobe.get_offsets(gcmd)
 -        initial_move = True
