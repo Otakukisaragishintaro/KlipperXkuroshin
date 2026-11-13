@@ -1,6 +1,6 @@
 # 中文测试清单
 
-[返回中文 README](../README.zh-CN.md) | [中文安装指南](INSTALL.zh-CN.md)
+[返回中文 README](../README.zh-CN.md) | [中文安装指南](INSTALL.zh-CN.md) | [单文件替换教程](SINGLE-FILE-REPLACEMENT.zh-CN.md)
 
 > 本文是测试计划，不代表其中的测试已经执行或通过。请记录实际命令、完整输出、Klipper commit 和测试环境。
 
