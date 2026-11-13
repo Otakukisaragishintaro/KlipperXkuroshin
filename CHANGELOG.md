@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-11-14 — Complete replacement file and installation documentation
+
+- Added `manual-replacement/bed_mesh.py`, a complete replacement generated
+  from the exact upstream base commit `29d4ec2d6d840ee839333306003a400da186d41d`
+  plus the repository patch.
+- Added a Simplified Chinese step-by-step guide covering commit verification,
+  local-change checks, download and syntax preflight, timestamped backup,
+  replacement, restart/log checks, and rollback.
+- Linked the replacement file and guide from the project documentation.
+- Expanded the test checklist to distinguish patch application from full-file
+  replacement validation.
+- This documentation change does not mean that compilation, automated tests,
+  regression tests, or hardware tests have passed.
+
 ## 2026-11-14 — Source review and defensive hardening
 
 ### Verified against upstream source
